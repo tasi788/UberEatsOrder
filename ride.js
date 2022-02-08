@@ -1,4 +1,4 @@
-// const url = 'https://myprivacy.uber.com/privacy/api/getRiderTrips?localeCode=zh-TW'
+const url = 'https://myprivacy.uber.com/privacy/api/getRiderTrips?localeCode=zh-TW'
 
 async function fetchRide(cursor = null) {
     const data = {limit: 40, cursor: cursor}
@@ -17,7 +17,7 @@ async function fetchRide(cursor = null) {
     let total = 0
     let oldest = null
     let distance = 0
-    let awkward = {};
+    let awkward = {}
     while (true) {
         const result = await fetchRide(cursor)
         cursor = result.data.next
@@ -33,7 +33,7 @@ async function fetchRide(cursor = null) {
                     if (isNaN(awkward[trip.currencyCode])) {
                         awkward[trip.currencyCode] = 0
                     }
-                    awkward[trip.currencyCode] += parseInt(trips.fare)
+                    awkward[trip.currencyCode] += trip.fare
                 }
             }
         }
@@ -48,4 +48,5 @@ async function fetchRide(cursor = null) {
     console.log('自從 ', new Date(oldest).toLocaleString())
     console.log('Uber 的總消費金額 ➡️', total)
     console.log('Uber 的外幣消費金額（未加總於上方金額） ➡️\n', JSON.stringify(awkward))
+    console.log('🚗 總移動距離：', distance)
 })()
