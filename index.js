@@ -16,6 +16,7 @@ async function fetchOrder(uuid = null) {
     let lastWorkflowUuid = null
     let total = 0
     let oldest = null
+    let awkward = {};
     while (true) {
         const result = await fetchOrder(lastWorkflowUuid)
         if (result.data.orders.length === 0) {
@@ -24,7 +25,14 @@ async function fetchOrder(uuid = null) {
         lastWorkflowUuid = result.data.orders[result.data.orders.length - 1].uuid
         oldest = result.data.orders[result.data.orders.length - 1].completionTime
         for (const order of result.data.orders) {
-            total += order.fare
+            if (order.currencyCode === "TWD") {
+                total += order.fare
+            } else {
+                if (isNaN(awkward[order.currencyCode])) {
+                        awkward[order.currencyCode] = 0
+                    }
+                    awkward[order.currencyCode] += order.fare
+            }
         }
         console.log('讀取中...')
         console.log('目前總金額：', total)
@@ -33,4 +41,5 @@ async function fetchOrder(uuid = null) {
 
     console.log('自從 ', new Date(oldest).toLocaleString())
     console.log('UberEats 的總消費金額 ➡️', total)
+    console.log('Uber 的外幣消費金額（未加總於上方金額） ➡️\n', JSON.stringify(awkward))
 })()

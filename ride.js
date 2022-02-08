@@ -1,4 +1,4 @@
-const url = 'https://myprivacy.uber.com/privacy/api/getRiderTrips?localeCode=zh-TW'
+// const url = 'https://myprivacy.uber.com/privacy/api/getRiderTrips?localeCode=zh-TW'
 
 async function fetchRide(cursor = null) {
     const data = {limit: 40, cursor: cursor}
@@ -20,7 +20,7 @@ async function fetchRide(cursor = null) {
     let awkward = {};
     while (true) {
         const result = await fetchRide(cursor)
-        cursor = result.data.next - 40
+        cursor = result.data.next
         let trips = await result.data.dataPage.trips
         for (const trip of trips) {
             if (trip.status === 'COMPLETED') {
@@ -33,12 +33,12 @@ async function fetchRide(cursor = null) {
                     if (isNaN(awkward[trip.currencyCode])) {
                         awkward[trip.currencyCode] = 0
                     }
-                    awkward[trip.currencyCode] += trips.fare
+                    awkward[trip.currencyCode] += parseInt(trips.fare)
                 }
             }
         }
         console.log('讀取中...')
-        console.log('目前總金額：', total)
+        console.log('目前總金額：', Math.round(total))
         if (result.data.next === null) {
             break
         }
