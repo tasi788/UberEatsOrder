@@ -20,7 +20,7 @@ async function fetchRide(cursor = null) {
     let awkward = {};
     while (true) {
         const result = await fetchRide(cursor)
-        cursor = result.next - 40
+        cursor = result.data.next - 40
         let trips = await result.data.dataPage.trips
         for (const trip of trips) {
             if (trip.status === 'COMPLETED') {
